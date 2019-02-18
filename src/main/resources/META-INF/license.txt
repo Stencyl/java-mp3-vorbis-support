@@ -1,6 +1,6 @@
 This work is based on three libraries:
 
-JOrbis (http://www.jcraft.com/jorbis/), VorbisSPI (http://www.javazoom.net/vorbisspi/vorbisspi.html) and Tritonus-Share (http://www.tritonus.org/plugins.html) which are all published under the LGPLv2+ license.
+JOrbis (http://www.jcraft.com/jorbis/), VorbisSPI (http://www.javazoom.net/vorbisspi/vorbisspi.html), MP3SPI (http://www.javazoom.net/mp3spi/mp3spi.html) and Tritonus-Share (http://www.tritonus.org/plugins.html) which are all published under the LGPLv2+ license.
 
 Here they are combined and further developed.
 

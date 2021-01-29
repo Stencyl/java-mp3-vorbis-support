@@ -1,19 +1,17 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'signing'
+apply plugin: 'maven-publish'
 
 description = 'MP3 and Vorbis SPI support. Combination of JOrbis, VorbisSPI, MP3SPI, and Tritonus-Share.'
-version = '1.1.1'
-group = 'com.github.trilarion'
-archivesBaseName = 'mp3vorbis-support'
+group = 'com.stencyl'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+version = rootProject.file('version.txt').text.trim()
+def isReleaseVersion = project.hasProperty("release")
+if(!isReleaseVersion) version = "$version-SNAPSHOT"
+
 repositories {
     mavenCentral()
-    flatDir {
-        dirs 'libs'
-    }
 }
 
 sourceSets {
@@ -21,7 +19,7 @@ sourceSets {
 }
 
 dependencies {
-    compile name: 'jlayer'
+    implementation group: 'javazoom', name: 'jlayer', version: '1.0.1'
     testCompile 'junit:junit:4.12'
     examplesCompile sourceSets.main.output
 }
@@ -72,51 +70,43 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                name 'vorbis support'
-                packaging 'jar'
-                // optionally artifactId can be defined here 
-                description 'Vorbis SPI support. Combination of JOrbis, JavaSPI and Tritonus-Share.'
-                url 'https://github.com/Trilarion/java-vorbis-support'
-
+publishing {
+    publications {
+        library(MavenPublication) {
+            from components.java
+            pom {
+                name.set("mp3 vorbis support")
+                description.set("MP3 SPI and Vorbis SPI support. Combination of JOrbis, VorbisSPI, MP3SPI, and Tritonus-Share.")
+                url.set("https://github.com/Stencyl/java-mp3-vorbis-support")
+                
                 scm {
-                    connection 'scm:git:https://github.com/Trilarion/java-vorbis-support.git'
-                    developerConnection 'scm:git:https://github.com/Trilarion/java-vorbis-support.git'
-                    url 'https://github.com/Trilarion/java-vorbis-support'
+                    connection.set("scm:git:git://github.com/Stencyl/java-mp3-vorbis-support.git")
+                    developerConnection.set("scm:git:ssh://github.com/Stencyl/java-mp3-vorbis-support.git")
+                    url.set("https://github.com/Stencyl/java-mp3-vorbis-support")
                 }
 
                 licenses {
                     license {
-                        name 'GNU LIBRARY GENERAL PUBLIC LICENSE, Version 3.0'
-                        url 'http://www.gnu.org/licenses/old-licenses/lgpl-3.0.txt'
+                        name.set("GNU LESSER GENERAL PUBLIC LICENSE, Version 3")
+                        url.set("https://www.gnu.org/licenses/lgpl-3.0.txt")
                     }
                 }
 
                 developers {
                     developer {
-                        id 'Trilarion'
-                        name 'Trilarion'
-                        email 'trilarion@twelvepm.de'
+                        id.set("Trilarion")
+                        name.set("Trilarion")
+                        email.set("trilarion@twelvepm.de")
                     }
                 }
             }
+        }
+    }
+    repositories {
+        maven {
+            name "stencylMavenRepository"
+            url = project.getProperty(name + (isReleaseVersion ? "ReleaseUrl" : "SnapshotUrl"))
+            credentials(PasswordCredentials)
         }
     }
 }
